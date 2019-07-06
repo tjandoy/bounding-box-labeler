@@ -1,0 +1,9 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "videoUploadOnPasses": false,
+  "ignoreTestFiles": "./cypress/integration/examples/*.spec.js",
+  "ignoreTestFiles": [
+    "**/__snapshots__/*",
+    "**/__image_snapshots__/*"
+  ]
+}

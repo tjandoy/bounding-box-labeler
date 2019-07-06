@@ -1,0 +1,16 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb", "prettier", "prettier/react"],
+  "rules": {
+    "react/destructuring-assignment": 0,
+    "import/prefer-default-export": 0,
+    "react/jsx-filename-extension": 0,
+    "quotes": [2, "single", "avoid-escape"]
+  },
+  "env": {
+    "browser": true,
+    "jest": true,
+    "cypress/globals": true
+  },
+  "plugins": ["cypress"]
+}

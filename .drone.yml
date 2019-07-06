@@ -1,0 +1,45 @@
+---
+kind: pipeline
+name: tests
+steps:
+  - name: install
+    image: node:10.15-alpine
+    commands:
+      - npm ci
+
+  - name: test
+    image: node:10.15-alpine
+    commands:
+      - npm run lint
+      - npm test
+    when:
+      event: [tag, push]
+
+  - name: do-not-change-name-integration-test-host
+    image: node:10.15-alpine
+    detach: true
+    commands:
+      - IS_TEST_BUILD=true npm run build
+      - PORT=3457 npm run prod-run
+    when:
+      event: [pull_request]
+
+  # Documentation here for different ways to run Integration Tests
+  # https://github.com/cypress-io/cypress-docker-images
+  - name: integration-test
+    image: cypress/base:10
+    volumes:
+      # This is a tmpfs volume which lets us avoid the cypress shared memory issue in Docker
+      - name: droneshm
+        path: /dev/shm
+    commands:
+      - npm install cypress --no-save
+      - npx wait-on --timeout 300000 http://do-not-change-name-integration-test-host:3457
+      - $(npm bin)/cypress verify && $(npm bin)/cypress run --config video=false,baseUrl=http://do-not-change-name-integration-test-host:3457
+    when:
+      event: [pull_request]
+
+volumes:
+# This creates a tmpfs volume for the duration of the pipeline, which we use to prevent crashing of cypress integration test
+  - name: droneshm
+    temp: {}

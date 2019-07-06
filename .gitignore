@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+.DS_Store
+.env
+build/
+coverage/
+
+# IDE-related
+.vscode/*
+.idea/*
+*.iml
+
+# Cypress related
+cypress/logs
+cypress/videos
+cypress/screenshots
+cypress.env.json
