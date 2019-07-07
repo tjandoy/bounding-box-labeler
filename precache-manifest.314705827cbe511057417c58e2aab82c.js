@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "6fd4113a4a60021782439c70a8c06fb4",
+    "revision": "01e067f912548e73b8f749cd74cbbebb",
     "url": "/bounding-box-labeler/index.html"
   },
   {
-    "revision": "6cd31c5bb9bfbf34b9b9",
+    "revision": "ae3e3aa19a3bc30f5dcf",
     "url": "/bounding-box-labeler/static/css/main.24c70b7a.chunk.css"
   },
   {
-    "revision": "3912ec30daa6e0eb7e25",
-    "url": "/bounding-box-labeler/static/js/2.27f0c0f0.chunk.js"
+    "revision": "55a18eee99e2fd992eac",
+    "url": "/bounding-box-labeler/static/js/2.e33847be.chunk.js"
   },
   {
-    "revision": "6cd31c5bb9bfbf34b9b9",
-    "url": "/bounding-box-labeler/static/js/main.d5584125.chunk.js"
+    "revision": "ae3e3aa19a3bc30f5dcf",
+    "url": "/bounding-box-labeler/static/js/main.653619cc.chunk.js"
   },
   {
     "revision": "6b3aff4713bed280d8cb",
