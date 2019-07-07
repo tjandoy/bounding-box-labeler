@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/bounding-box-labeler/static/css/main.24c70b7a.chunk.css",
+    "main.js": "/bounding-box-labeler/static/js/main.d5584125.chunk.js",
+    "main.js.map": "/bounding-box-labeler/static/js/main.d5584125.chunk.js.map",
+    "runtime~main.js": "/bounding-box-labeler/static/js/runtime~main.105a057a.js",
+    "runtime~main.js.map": "/bounding-box-labeler/static/js/runtime~main.105a057a.js.map",
+    "static/js/2.27f0c0f0.chunk.js": "/bounding-box-labeler/static/js/2.27f0c0f0.chunk.js",
+    "static/js/2.27f0c0f0.chunk.js.map": "/bounding-box-labeler/static/js/2.27f0c0f0.chunk.js.map",
+    "index.html": "/bounding-box-labeler/index.html",
+    "precache-manifest.e395ed9a8c955c4bebf643fb6a3045e5.js": "/bounding-box-labeler/precache-manifest.e395ed9a8c955c4bebf643fb6a3045e5.js",
+    "service-worker.js": "/bounding-box-labeler/service-worker.js",
+    "static/css/main.24c70b7a.chunk.css.map": "/bounding-box-labeler/static/css/main.24c70b7a.chunk.css.map"
+  }
+}
