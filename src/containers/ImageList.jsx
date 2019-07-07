@@ -10,6 +10,7 @@ const Outer = styled.div`
   display: flex;
   height: 100vh;
   flex-direction: column;
+  box-shadow: 1px 0 4px 0 #000;
 `;
 
 const Header = styled.div`

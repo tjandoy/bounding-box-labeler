@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import {
   ShapeEditor,
@@ -39,6 +40,13 @@ function arrayReplace(arr, index, item) {
 }
 const to5 = n => Math.round(n);
 
+const IssueWrapper = styled.div`
+  padding: 3rem;
+  max-width: 600px;
+  margin: auto;
+  white-space: pre-wrap;
+`;
+
 const Outer = styled.div`
   display: flex;
   height: 100vh;
@@ -75,9 +83,16 @@ const Overlay = styled.svg`
 `;
 
 const OverlayLine = styled.line`
-  stroke: rgba(0, 0, 0, 0.5);
-  stroke-width: 0.5px;
+  stroke: #fff;
+  stroke-width: 0.8px;
   stroke-dasharray: 5, 15;
+`;
+
+const OverlayLineOutline = styled.line`
+  stroke: #6464ff;
+  stroke-width: 1.5px;
+  stroke-dashoffset: 0.5px;
+  stroke-dasharray: 6, 14;
 `;
 
 class Editor extends Component {
@@ -145,7 +160,11 @@ class Editor extends Component {
     const { scale, vectorWidth, vectorHeight, mouseX, mouseY } = this.state;
 
     if (!this.props.selectedFile) {
-      return <span>Needs a file</span>;
+      return (
+        <IssueWrapper>
+          <FormattedMessage id="editor.needsFile" />
+        </IssueWrapper>
+      );
     }
 
     const {
@@ -155,10 +174,12 @@ class Editor extends Component {
 
     if (!imageSrc) {
       return (
-        <span>
-          File cache has been lost due to reload. Please upload the file named
-          &quot;{filename}&quot;
-        </span>
+        <IssueWrapper>
+          <FormattedMessage
+            id="editor.fileCacheMissing"
+            values={{ filename }}
+          />
+        </IssueWrapper>
       );
     }
 
@@ -237,7 +258,9 @@ class Editor extends Component {
                 this.overlayEl = el;
               }}
             >
+              <OverlayLineOutline x1={mouseX} y1={0} x2={mouseX} y2={10000} />
               <OverlayLine x1={mouseX} y1={0} x2={mouseX} y2={10000} />
+              <OverlayLineOutline x1={0} y1={mouseY} x2={10000} y2={mouseY} />
               <OverlayLine x1={0} y1={mouseY} x2={10000} y2={mouseY} />
             </Overlay>
           </InnerContainer>

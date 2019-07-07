@@ -1,3 +1,4 @@
 {
-  "hello": "Hello!"
+  "editor.needsFile": "Please upload a file on the left to begin labeling",
+  "editor.fileCacheMissing": "File cache has been lost due to reload.\nPlease upload the file named \"{filename}\" to resume editing."
 }
