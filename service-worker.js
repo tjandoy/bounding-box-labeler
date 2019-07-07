@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/bounding-box-labeler/precache-manifest.314705827cbe511057417c58e2aab82c.js"
+  "/bounding-box-labeler/precache-manifest.9dbd743fd1ad442f44934bb06163629f.js"
 );
 
 self.addEventListener('message', (event) => {
