@@ -8,10 +8,14 @@ import ja from 'react-intl/locale-data/ja';
 import configureStore from './configureStore';
 import View from './containers/View';
 import { DEFAULT_LOCALE, getBrowserLocale, messages } from './utils/I18N';
+import { getSavedFileMeta } from './utils/localStore';
 import './index.css';
 
+const savedFileDict = getSavedFileMeta();
 const initialState = {
   locale: getBrowserLocale(),
+  data: { fileDict: getSavedFileMeta() },
+  ui: { selectedFilename: Object.keys(savedFileDict)[0] },
 };
 const initStore = configureStore(initialState);
 

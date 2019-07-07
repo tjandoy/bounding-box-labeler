@@ -22,7 +22,7 @@ export const languagesList = {
   en: 'English',
 };
 
-export const DEFAULT_LOCALE = 'ja';
+export const DEFAULT_LOCALE = 'en';
 const LOCALE_STORAGE_KEY = 'REMEMBER_LOCALE';
 
 export function getBrowserLocale() {

@@ -35,13 +35,21 @@ const List = styled.ul`
 const ListItem = styled.li`
   text-align: center;
   border-bottom: solid black 1px;
+  display: flex;
 `;
 
 const ItemButton = styled.button`
   background: none;
   border: none;
-  width: 100%;
   height: 2rem;
+  flex: 1 1 auto;
+`;
+
+const IgnoreButton = styled.button`
+  background: none;
+  border: none;
+  height: 2rem;
+  flex: 0 1 auto;
 `;
 
 const exportResults = files => {
@@ -49,18 +57,12 @@ const exportResults = files => {
     new Blob(
       [
         JSON.stringify(
-          files.map(({ name, boxes }) => ({
-            filename: name,
-            boxes: boxes.map(({ x, y, height, width }) => ({
-              label: 'key',
-              coordinates: {
-                x: Math.round(x + width / 2),
-                y: Math.round(y + height / 2),
-                height,
-                width,
-              },
-            })),
-          }))
+          files
+            .filter(f => !f.ignore)
+            .map(({ name, boxes }) => ({
+              filename: name,
+              boxes,
+            }))
         ),
       ],
       { type: 'application/json;charset=utf-8' }
@@ -70,8 +72,74 @@ const exportResults = files => {
 };
 
 class ImageList extends Component {
+  constructor(props) {
+    super(props);
+
+    this.keyHandler = this.keyHandler.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.keyHandler);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.keyHandler);
+  }
+
+  keyHandler(event) {
+    // If the keydown event has already been handled by some other custom
+    // handler, we abort here.
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    let handled = true;
+
+    const advance = (n = 1) => {
+      const { files, selectedFilename, selectFile } = this.props;
+      const filenameList = files.map(f => f.name);
+      const selectedIndex = filenameList.indexOf(selectedFilename);
+
+      let nextSelectedFilename = filenameList[0] || null;
+      if (selectedIndex >= 0) {
+        nextSelectedFilename =
+          filenameList[
+            (filenameList.length + selectedIndex + n) % filenameList.length
+          ];
+      }
+
+      selectFile(nextSelectedFilename);
+    };
+
+    switch (event.key) {
+      case 'x':
+      case 'ArrowRight':
+      case 'ArrowDown':
+        advance(1);
+        break;
+      case 'z':
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        advance(-1);
+        break;
+      default:
+        handled = false;
+    }
+
+    if (handled) {
+      event.preventDefault();
+    }
+  }
+
   render() {
-    const { files, setFiles, selectFile, selectedFilename } = this.props;
+    const {
+      files,
+      addFiles,
+      removeAllFiles,
+      selectFile,
+      selectedFilename,
+      toggleIgnoreFile,
+    } = this.props;
 
     return (
       <Outer>
@@ -82,43 +150,74 @@ class ImageList extends Component {
             type="file"
             multiple
             accept="image/*"
+            ref={el => {
+              this.fileInput = el;
+            }}
             onChange={event => {
               if (!event.target.files || event.target.files.length < 1) {
                 return;
               }
 
-              setFiles(event.target.files);
+              addFiles(event.target.files);
             }}
           />
           <br />
           <button
             type="button"
+            disabled={files.length < 1}
             onClick={() => {
               exportResults(files);
             }}
           >
             Export
           </button>
+          <button
+            type="button"
+            disabled={files.length < 1}
+            onClick={() => {
+              if (
+                // eslint-disable-next-line no-alert
+                window.confirm(
+                  'Do you really want to delete all file metadata?'
+                )
+              ) {
+                removeAllFiles();
+                this.fileInput.value = '';
+              }
+            }}
+          >
+            Clear All
+          </button>
         </Header>
         <Container>
           <List>
-            {files.map(({ name, boxes }) => {
+            {files.map(({ name, boxes, ignore }) => {
               let background = 'transparent';
-              if (name === selectedFilename) {
+              if (ignore) {
+                background = 'gray';
+              } else if (name === selectedFilename) {
                 background = 'lightblue';
               } else if (boxes.length > 0) {
                 background = 'lightgreen';
               }
 
               return (
-                <ListItem key={name}>
+                <ListItem key={name} style={{ background }}>
                   <ItemButton
                     type="button"
+                    style={{
+                      textDecoration: ignore ? 'line-through' : undefined,
+                    }}
                     onClick={() => selectFile(name)}
-                    style={{ background }}
                   >
-                    {name} ({boxes.length})
+                    {name}
                   </ItemButton>
+                  <IgnoreButton
+                    type="button"
+                    onClick={() => toggleIgnoreFile(name)}
+                  >
+                    ×
+                  </IgnoreButton>
                 </ListItem>
               );
             })}
@@ -130,15 +229,17 @@ class ImageList extends Component {
 }
 
 ImageList.propTypes = {
+  addFiles: PropTypes.func.isRequired,
   files: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string,
       boxes: PropTypes.arrayOf(PropTypes.shape({})),
     })
   ).isRequired,
-  setFiles: PropTypes.func.isRequired,
+  removeAllFiles: PropTypes.func.isRequired,
   selectFile: PropTypes.func.isRequired,
   selectedFilename: PropTypes.string,
+  toggleIgnoreFile: PropTypes.func.isRequired,
 };
 ImageList.defaultProps = {
   selectedFilename: null,
@@ -150,8 +251,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  setFiles: actions.setFiles,
+  addFiles: actions.addFiles,
+  removeAllFiles: actions.removeAllFiles,
   selectFile: actions.selectFile,
+  toggleIgnoreFile: actions.toggleIgnoreFile,
 };
 
 export default connect(

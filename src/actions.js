@@ -1,23 +1,34 @@
-export const SET_FILES = 'SET_FILES';
-export const setFiles = fileList => (dispatch, getState) => {
-  const { fileDict } = getState().data;
+import { saveFileMeta } from './utils/localStore';
 
-  dispatch({
-    type: SET_FILES,
-    payload: Array.from(fileList).reduce(
-      (acc, file) => {
-        if (!acc[file.name]) {
-          acc[file.name] = {
-            name: file.name,
-            objectURL: URL.createObjectURL(file),
-            boxes: [],
-          };
-        }
-        return acc;
-      },
-      { ...fileDict }
-    ),
-  });
+export const SET_FILE_DICT = 'SET_FILE_DICT';
+const setFileDict = fileDict => {
+  saveFileMeta(fileDict);
+
+  return {
+    type: SET_FILE_DICT,
+    payload: fileDict,
+  };
+};
+
+export const ADD_FILES = 'ADD_FILES';
+export const addFiles = fileList => (dispatch, getState) => {
+  const { fileDict } = getState().data;
+  const updatedFileDict = Array.from(fileList).reduce(
+    (acc, file) => {
+      if (!acc[file.name] || !acc[file.name].objectURL) {
+        acc[file.name] = {
+          name: file.name,
+          boxes: [],
+          ...(acc[file.name] || {}),
+          objectURL: URL.createObjectURL(file),
+        };
+      }
+      return acc;
+    },
+    { ...fileDict }
+  );
+
+  dispatch(setFileDict(updatedFileDict));
 };
 
 export const SELECT_FILE = 'SELECT_FILE';
@@ -26,11 +37,35 @@ export const selectFile = filename => ({
   payload: filename,
 });
 
-export const SET_IMAGE_BOXES = 'SET_IMAGE_BOXES';
-export const setImageBoxes = (filename, boxes) => ({
-  type: SET_IMAGE_BOXES,
-  payload: { filename, boxes },
-});
+export const setImageBoxes = (filename, boxes) => (dispatch, getState) => {
+  const { fileDict } = getState().data;
+
+  dispatch(
+    setFileDict({
+      ...fileDict,
+      [filename]: {
+        ...fileDict[filename],
+        boxes,
+      },
+    })
+  );
+};
+
+export const toggleIgnoreFile = filename => (dispatch, getState) => {
+  const { fileDict } = getState().data;
+
+  dispatch(
+    setFileDict({
+      ...fileDict,
+      [filename]: {
+        ...fileDict[filename],
+        ignore: !fileDict[filename].ignore,
+      },
+    })
+  );
+};
+
+export const removeAllFiles = () => setFileDict({});
 
 export const SWITCH_LANGUAGE = 'SWITCH_LANGUAGE';
 export const switchLanguage = lang => ({

@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
-import { saveBrowserLocale } from '../utils/I18N';
-import { switchLanguage as switchLanguageAction } from '../actions';
+import { filesSelector } from '../selectors';
 import Editor from './Editor';
 import ImageList from './ImageList';
 
@@ -28,6 +27,26 @@ class View extends Component {
     super(props);
 
     this.state = {};
+
+    this.warnBeforeNavigate = this.warnBeforeNavigate.bind(this);
+  }
+
+  componentDidMount() {
+    window.addEventListener('beforeunload', this.warnBeforeNavigate);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('beforeunload', this.warnBeforeNavigate);
+  }
+
+  warnBeforeNavigate(e) {
+    const { files } = this.props;
+
+    // Warn before navigation if any boxes have been set
+    if (files.some(f => f.boxes && f.boxes.length > 0)) {
+      e.preventDefault();
+      e.returnValue = 'stop';
+    }
   }
 
   render() {
@@ -45,34 +64,11 @@ class View extends Component {
 }
 
 View.propTypes = {
-  // locale: PropTypes.oneOf(['en', 'ja']).isRequired,
-  // switchLanguage: PropTypes.func.isRequired,
+  files: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 const mapStateToProps = state => ({
-  locale: state.locale,
+  files: filesSelector(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  switchLanguage: lang => {
-    saveBrowserLocale(lang);
-    dispatch(switchLanguageAction(lang));
-  },
-});
-
-const mergeProps = (stateProps, dispatchProps, ownProps) => ({
-  ...ownProps,
-  ...stateProps,
-  ...dispatchProps,
-  switchLanguage: () => {
-    dispatchProps.switchLanguage(stateProps.locale === 'en' ? 'ja' : 'en');
-  },
-});
-
-export default hot(module)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-    mergeProps
-  )(View)
-);
+export default hot(module)(connect(mapStateToProps)(View));

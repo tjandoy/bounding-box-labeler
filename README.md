@@ -1,12 +1,5 @@
 # Bounding Box Labeler
 
-### Todo
-
-- Keyboard shortcuts to go to next image
-- onBeforeUnload to avoid unwanted reload, etc.
-- export image size as well
-- custom label per box (also with keyboard shortcuts)
-
 ## Installation and Usage
 
 #### Development

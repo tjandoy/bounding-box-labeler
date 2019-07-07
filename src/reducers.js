@@ -13,21 +13,10 @@ const DEFAULT_STATE = {
 
 function data(state = DEFAULT_STATE.data, action) {
   switch (action.type) {
-    case actions.SET_FILES:
+    case actions.SET_FILE_DICT:
       return {
         ...state,
         fileDict: action.payload,
-      };
-    case actions.SET_IMAGE_BOXES:
-      return {
-        ...state,
-        fileDict: {
-          ...state.fileDict,
-          [action.payload.filename]: {
-            ...state.fileDict[action.payload.filename],
-            boxes: action.payload.boxes,
-          },
-        },
       };
     default:
       return state;
@@ -41,7 +30,7 @@ function ui(state = DEFAULT_STATE.ui, action) {
         ...state,
         selectedFilename: action.payload,
       };
-    case actions.SET_FILES:
+    case actions.SET_FILE_DICT:
       return {
         ...state,
         selectedFilename:

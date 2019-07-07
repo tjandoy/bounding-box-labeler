@@ -153,6 +153,15 @@ class Editor extends Component {
       setImageBoxes,
     } = this.props;
 
+    if (!imageSrc) {
+      return (
+        <span>
+          File cache has been lost due to reload. Please upload the file named
+          &quot;{filename}&quot;
+        </span>
+      );
+    }
+
     const shapes = boxes.map((box, index) => {
       const { width, height, x, y } = box;
       return (
